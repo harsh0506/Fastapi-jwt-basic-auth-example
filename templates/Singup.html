@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="/Login">Login</a>
+    <a href="/">Home</a>
+
+    <h1>signup page</h1>
+
+    <input type="text" name="username" id="username">
+    <input type="text" name="password" id="password">
+    <button type="button" id="sbtn">Signup</button>
+
+    <script>
+        let username = document.getElementById("username")
+        let password = document.getElementById("password")
+        let sbtn = document.getElementById("sbtn")
+
+        sbtn.addEventListener("click", async () => {
+            const trimmedUsername = username.value.trim();
+            const trimmedPassword = password.value.trim();
+
+            if (trimmedUsername === "" || trimmedPassword === "") {
+                alert("Please fill in all the fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/signup", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: trimmedUsername,
+                        password: trimmedPassword
+                    }),
+                });
+
+                const responseData = await response.json();
+                console.log("Response Data:", responseData);
+                alert("User created successfully");
+                window.location.href = "/Login";
+
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again later.");
+            }
+
+        })
+    </script>
+</body>
+
+</html>

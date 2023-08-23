@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="/Signup">Signup</a>
+    <a href="/Login">Login</a>
+
+    <h1>Home page</h1>
+    <button id="logout">Logout</button>
+    <script>
+        let btn = document.getElementById("logout")
+
+        btn.addEventListener("click", async () => {
+            const retrieveDbPromise = window.indexedDB.open("tokens", 1);
+
+            retrieveDbPromise.onsuccess = function (event) {
+                const db = event.target.result;
+                const transaction = db.transaction("tokens", "readwrite");
+                const store = transaction.objectStore("tokens");
+
+                const deleteRequest = store.delete(1);
+
+                deleteRequest.onsuccess = function (event) {
+                    console.log("Token removed from IndexedDB");
+                };
+
+                deleteRequest.onerror = function (event) {
+                    console.error("Error removing token from IndexedDB:", event.target.error);
+                };
+
+                db.close();
+            };
+
+            window.location.href = "/Login";
+        })
+
+        // Retrieve and log the stored token from IndexedDB
+        const retrieveDbPromise = window.indexedDB.open("tokens", 1);
+
+        retrieveDbPromise.onsuccess = function (event) {
+            const db = event.target.result;
+            const transaction = db.transaction("tokens", "readonly");
+            const store = transaction.objectStore("tokens");
+            const getRequest = store.get(1);
+
+            getRequest.onsuccess = function (event) {
+                const storedToken = event.target.result;
+                if (storedToken) {
+                    console.log("Stored Token:", storedToken.token);
+                    // You can use the storedToken.token in your application
+                } else {
+                    console.log("Token not found in IndexedDB");
+                    window.location.href = "/Login";
+                }
+            };
+
+            getRequest.onerror = function (event) {
+                console.error("Error retrieving token from IndexedDB:", event.target.error);
+            };
+
+            db.close();
+        };
+
+    </script>
+</body>
+
+</html>

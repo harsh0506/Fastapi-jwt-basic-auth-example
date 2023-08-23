@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    Login page <a href="/Signup">Signup</a>
+    <a href="/">Home</a>
+
+    <h1>Login page</h1>
+
+    <input type="text" id="username" name="username">
+    <input type="text" id="password" name="password">
+    <button type="button" id="sbtn">Signup</button>
+
+    <script>
+        let username = document.getElementById("username");
+        let password = document.getElementById("password");
+        let sbtn = document.getElementById("sbtn");
+
+        sbtn.addEventListener("click", async () => {
+            const trimmedUsername = username.value.trim();
+            const trimmedPassword = password.value.trim();
+
+            if (trimmedUsername === "" || trimmedPassword === "") {
+                alert("Please fill in all the fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/login", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: trimmedUsername,
+                        password: trimmedPassword
+                    }),
+                });
+
+                const responseData = await response.json();
+                console.log("Token:", responseData);
+                alert("User Logged in successfully");
+
+                if (!('indexedDB' in window)) {
+                    console.log("This browser doesn't support IndexedDB");
+                    return;
+                }
+
+                const dbPromise = window.indexedDB.open("tokens", 1);
+
+                dbPromise.onupgradeneeded = function (event) {
+                    const db = event.target.result;
+                    db.createObjectStore("tokens", { keyPath: "id" });
+                };
+
+                dbPromise.onsuccess = function (event) {
+                    const db = event.target.result;
+                    const transaction = db.transaction("tokens", "readwrite");
+                    const store = transaction.objectStore("tokens");
+
+                    store.put({ id: 1, token: responseData });
+
+                    transaction.oncomplete = function () {
+                        db.close();
+
+                        // Retrieve and log the stored token from IndexedDB
+                        const retrieveDbPromise = window.indexedDB.open("tokens", 1);
+
+                        retrieveDbPromise.onsuccess = function (event) {
+                            const db = event.target.result;
+                            const transaction = db.transaction("tokens", "readonly");
+                            const store = transaction.objectStore("tokens");
+                            const getRequest = store.get(1);
+
+                            getRequest.onsuccess = function (event) {
+                                const storedToken = event.target.result;
+                                if (storedToken) {
+                                    console.log("Stored Token:", storedToken.token);
+                                }
+                            };
+
+                            db.close();
+                        };
+                    };
+                };
+                window.location.href("/");
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again later.");
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
