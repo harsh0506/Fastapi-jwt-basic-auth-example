@@ -37,10 +37,10 @@ Assuming you have a Dockerfile for your application, follow these steps to creat
 
 ```bash
 # Build the Docker image
-docker build -t simple-flask-auth .
+docker build -t simple-flask-auth_v1 .
 
 # Run the Docker container
-docker run -p 8000:8000 simple-flask-auth
+docker run -p 8000:8000 simple-flask-auth_v1
 ```
 
 Replace `simple-flask-auth` with a suitable name for your Docker image.

@@ -5,7 +5,10 @@ from models import User
 from helper import get_db , verify_password
 from jose import jwt
 from datetime import datetime, timedelta
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class UserCreate(BaseModel):
     username: str
@@ -20,7 +23,6 @@ def login_access_token(user: UserCreate, db: Session = Depends(get_db)):
     username = user.username
     password = user.password
     
-    # Retrieve user from the database
     db_user = db.query(User).filter(User.name == username).first()
     
     if not db_user:
@@ -33,7 +35,7 @@ def login_access_token(user: UserCreate, db: Session = Depends(get_db)):
         "sub": str(db_user.id),  
         "exp": datetime.utcnow() + timedelta(days=1)  
     }
-    secret_key = b'3v5w9z$C&F)J@NcRfUjXn2r5u7x!A%D*'
+    secret_key = os.getenv("SECRETKEY")
 
     token = jwt.encode({"id": str(db_user.id)}, secret_key, algorithm='HS256')
     return token

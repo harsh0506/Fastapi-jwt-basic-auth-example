@@ -2,9 +2,11 @@ FROM python:3.9
 
 WORKDIR /app
 
-COPY . .
+COPY requirement.txt /app/  
 
-RUN pip install -r /app/requirements.txt
+RUN pip install -r /app/requirement.txt
+
+COPY . /app/
 
 EXPOSE 8000
 

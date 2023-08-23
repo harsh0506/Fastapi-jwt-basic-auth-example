@@ -7,3 +7,6 @@ SQLAlchemy>=1.4,<=2.0
 psycopg2-binary==2.9.5
 email-validator>=1.0.3
 python-jose==3.3.0 
+python-dotenv
+passlib
+pydantic
