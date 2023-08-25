@@ -6,7 +6,7 @@ from helper import get_password_hash, get_db
 from jose import jwt
 from datetime import datetime, timedelta
 import os
-from dotenv import load_dotenv
+
 
 class UserCreate(BaseModel):
     username: str

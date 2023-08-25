@@ -3,8 +3,6 @@ from models import engine , Base
 from Signup import router 
 from Login import loginRouter
 from protected_get_1 import protectedRoute
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 # Create FastAPI app instance
 app = FastAPI()
@@ -17,11 +15,11 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/Login")
-def index(request: Request):
+def Login(request: Request):
     return templates.TemplateResponse("Login.html", {"request": request})
 
 @app.get("/Signup")
-def index(request: Request):
+def Signup(request: Request):
     return templates.TemplateResponse("Singup.html", {"request": request})
 
 app.include_router(router)

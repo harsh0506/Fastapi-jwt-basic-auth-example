@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from models import User
 from helper import get_db , verify_password
 from jose import jwt
-from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 
@@ -31,10 +30,6 @@ def login_access_token(user: UserCreate, db: Session = Depends(get_db)):
     if not verify_password(password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    token_data = {
-        "sub": str(db_user.id),  
-        "exp": datetime.utcnow() + timedelta(days=1)  
-    }
     secret_key = os.getenv("SECRETKEY")
 
     token = jwt.encode({"id": str(db_user.id)}, secret_key, algorithm='HS256')
